@@ -1,7 +1,7 @@
 # 🚀 Production Readiness Checklist
 
 > **Status:** 🔧 UNDER UTVECKLING  
-> **Senast uppdaterad:** 2026-03-28  
+> **Senast uppdaterad:** 2026-04-01  
 > **Ansvarig:** [Fahri Kuzey]  
 > **Deployment Target:** ☁️ Microsoft Azure
 
@@ -12,7 +12,7 @@
 - **Kritiska problem:** 6/6 ✅
 - **Viktiga problem:** 4/4 ✅
 - **Rekommendationer:** 0/5 ✗
-- **Total progress:** 67% ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜
+- **Total progress:** 73% ⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜
 
 ---
 
@@ -612,9 +612,10 @@ spring.datasource.hikari.max-lifetime=600000
 
 ### 11. Docker + Azure Container Apps Deployment
 
-**Status:** ❌ Ej påbörjad  
+**Status:** ⏳ Pågående (Fas 1 & 2 klara!)  
 **Prioritet:** 💡 VIKTIGT FÖR CLOUD  
-**Tid:** ~2-3 dagar
+**Tid:** ~2-3 dagar  
+**Genomfört:** 2026-03-30 till 2026-04-01
 
 **Deployment Strategi: Azure Container Apps med Docker**
 
@@ -627,26 +628,37 @@ Vi använder Docker containers för flexibilitet och lägre kostnad.
 - ✅ Fungerar med vilken teknologi som helst
 - ✅ Lätt att testa lokalt innan Azure deployment
 
-**Fas 1: Dockerfiles (2-3 timmar)**
+**Fas 1: Dockerfiles (2-3 timmar)** ✅ KLAR
 
-- [ ] Skapa `Dockerfile` för alla 7 microservices:
-  - [ ] eureka-server
-  - [ ] api-gateway
-  - [ ] userService
-  - [ ] adminService
-  - [ ] paymentService
-  - [ ] examService
-  - [ ] quizService
-- [ ] Skapa `.dockerignore` filer (exkludera target/, .env, etc)
-- [ ] Skapa `docker-compose.yml` för lokal testning
+- [x] Skapa `Dockerfile` för alla 7 microservices:
+  - [x] eureka-server
+  - [x] api-gateway
+  - [x] userService
+  - [x] adminService
+  - [x] paymentService
+  - [x] examService
+  - [x] quizService
+- [x] Skapa `.dockerignore` filer (exkludera target/, .env, etc)
+- [x] Skapa `docker-compose.yml` för lokal testning
+- [x] Pusha Dockerfiles och .dockerignore till GitHub
+- [x] Setup Git Submodules för huvudrepo TrafficSchool
 
-**Fas 2: Lokal Docker Test (1 timme)**
+**Fas 2: Lokal Docker Test (1 timme)** ✅ KLAR
 
-- [ ] Bygga alla Docker images: `docker-compose build`
-- [ ] Starta alla containers: `docker-compose up`
-- [ ] Testa service discovery (Eureka)
-- [ ] Testa inter-service communication
-- [ ] Verifiera health checks
+- [x] Bygga alla Docker images: `docker-compose build`
+- [x] Starta alla containers: `docker-compose up -d`
+- [x] Testa service discovery (Eureka) - Alla 6 services registrerade
+- [x] Testa inter-service communication - Routing fungerar
+- [x] Verifiera health checks - API Gateway UP, MySQL healthy
+- [x] Testa database connectivity - 11 tabeller skapade automatiskt
+
+**Resultat Fas 1 & 2:**
+
+- ✅ 7 Docker images byggda (totalt ~4GB, komprimerat ~1.4GB)
+- ✅ docker-compose.yml debuggad och testad (4 iterationer)
+- ✅ Alla services körs framgångsrikt i Docker
+- ✅ MySQL på port 3307 (undviker konflikt med lokal MySQL)
+- ✅ Pushat till GitHub huvudrepo: TrafficSchool-System/TrafficSchool
 
 **Fas 3: Azure Setup (3-4 timmar)**
 
