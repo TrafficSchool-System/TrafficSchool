@@ -1,0 +1,21 @@
+[submodule "eureka-server"]
+	path = eureka-server
+	url = https://github.com/TrafficSchool-System/eureka-server.git
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/TrafficSchool-System/api-gateway.git
+[submodule "userService"]
+	path = userService
+	url = https://github.com/TrafficSchool-System/userService.git
+[submodule "adminService"]
+	path = adminService
+	url = https://github.com/TrafficSchool-System/adminService.git
+[submodule "paymentService"]
+	path = paymentService
+	url = https://github.com/TrafficSchool-System/paymentService.git
+[submodule "examService"]
+	path = examService
+	url = https://github.com/TrafficSchool-System/examService.git
+[submodule "quizService"]
+	path = quizService
+	url = https://github.com/TrafficSchool-System/quizService.git
