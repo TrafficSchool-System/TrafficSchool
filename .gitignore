@@ -1,0 +1,58 @@
+# ==========================================
+# ENVIRONMENT VARIABLES & SECRETS - VIKTIGT!
+# ==========================================
+# Dessa filer innehåller JWT_SECRET och andra känsliga data
+# Får ALDRIG commitas till Git!
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# Secrets och konfigurationer
+secrets/
+*.key
+*.pem
+*.p12
+*-secrets.ps1
+*-secrets.sh
+production-config.*
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Build
+target/
+build/
+dist/
+*.jar
+*.war
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+package-lock.json
+yarn.lock
+
+# Database
+*.db
+*.sqlite
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~

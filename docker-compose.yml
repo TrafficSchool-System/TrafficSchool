@@ -1,0 +1,215 @@
+# ============================================
+# DOCKER COMPOSE VERSION
+# ============================================
+# Version 3.8 = Modern syntax med bra features
+version: "3.8"
+
+# ============================================
+# SERVICES (Alla containers vi kör)
+# ============================================
+services:
+  # ------------------------------------------
+  # MYSQL DATABAS
+  # ------------------------------------------
+  # Startar först - alla andra väntar på den
+  mysql:
+    image: mysql:8.0 # Officiell MySQL 8.0 image
+    container_name: trafficschool-mysql # Namnet på containern
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # Root lösenord
+      MYSQL_DATABASE: trafficschool # Skapa databas automatiskt
+    ports:
+      - "3307:3306" # Host port 3307 → Container port 3306 (undvik konflikt med lokal MySQL)
+    volumes:
+      - mysql-data:/var/lib/mysql # Spara data permanent (även efter restart)
+    networks:
+      - trafficschool-network # Gemensamt nätverk
+    healthcheck: # Kolla om MySQL är redo
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s # Testa var 10:e sekund
+      timeout: 5s
+      retries: 5
+
+  # ------------------------------------------
+  # EUREKA SERVER (Service Discovery)
+  # ------------------------------------------
+  # Startar efter MySQL, ingen databas behövs men andra behöver Eureka
+  eureka-server:
+    build: ./eureka-server # Var Dockerfile ligger
+    container_name: eureka-server
+    ports:
+      - "8761:8761" # Eureka dashboard port
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker # Aktivera Docker profil (om du har en)
+    networks:
+      - trafficschool-network
+    depends_on:
+      mysql:
+        condition: service_healthy # Vänta tills MySQL är redo
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8761/actuator/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s # Ge 40 sek innan health checks börjar
+
+  # ------------------------------------------
+  # USER SERVICE
+  # ------------------------------------------
+  user-service:
+    build: ./userService
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/trafficschool # Använd "mysql" som hostname
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+      - SENDGRID_API_KEY=dummy_key_for_local_testing # SendGrid API key för lokal test
+      - JWT_SECRET=mySecretKey123456789012345678901234567890 # JWT secret
+    networks:
+      - trafficschool-network
+    depends_on:
+      mysql:
+        condition: service_healthy # Vänta på MySQL
+      eureka-server:
+        condition: service_healthy # Vänta på Eureka
+
+  # ------------------------------------------
+  # ADMIN SERVICE
+  # ------------------------------------------
+  admin-service:
+    build: ./adminService
+    container_name: admin-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/trafficschool
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+      - JWT_SECRET=mySecretKey123456789012345678901234567890 # JWT secret för Docker test
+    networks:
+      - trafficschool-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  # ------------------------------------------
+  # PAYMENT SERVICE
+  # ------------------------------------------
+  payment-service:
+    build: ./paymentService
+    container_name: payment-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/trafficschool
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - trafficschool-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  # ------------------------------------------
+  # EXAM SERVICE
+  # ------------------------------------------
+  exam-service:
+    build: ./examService
+    container_name: exam-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/trafficschool
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - trafficschool-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  # ------------------------------------------
+  # QUIZ SERVICE
+  # ------------------------------------------
+  quiz-service:
+    build: ./quizService
+    container_name: quiz-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/trafficschool
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - trafficschool-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  # ------------------------------------------
+  # API GATEWAY (Startar sist)
+  # ------------------------------------------
+  # Behöver alla andra services vara uppe först
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080" # Main entry point
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+      - JWT_SECRET=mySecretKey123456789012345678901234567890 # JWT secret för Docker lokal test
+    networks:
+      - trafficschool-network
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      user-service:
+        condition: service_started # Vänta tills service startat
+      admin-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      exam-service:
+        condition: service_started
+      quiz-service:
+        condition: service_started
+
+# ============================================
+# NETWORKS (Gemensamt nätverk)
+# ============================================
+# Alla containers kan prata med varandra via service-namn
+networks:
+  trafficschool-network:
+    driver: bridge # Standard Docker network driver
+
+# ============================================
+# VOLUMES (Permanent data storage)
+# ============================================
+# MySQL data sparas här (överlever restart)
+volumes:
+  mysql-data:
