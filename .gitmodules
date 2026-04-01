@@ -19,3 +19,6 @@
 [submodule "quizService"]
 	path = quizService
 	url = https://github.com/TrafficSchool-System/quizService.git
+[submodule "Frontend/frontend"]
+	path = Frontend/frontend
+	url = https://github.com/TrafficSchool-System/frontend.git
