@@ -56,3 +56,19 @@ tmp/
 *.bak
 *.swp
 *~
+
+# Service repos - these are standalone git repos, not part of this repo
+adminService/
+api-gateway/
+eureka-server/
+examService/
+frontend/
+paymentService/
+quizService/
+userService/
+
+# Misc workspace/backup files
+ws.code-workspace
+*.code-workspace
+railway-backup.sql
+SQL/
