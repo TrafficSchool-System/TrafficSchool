@@ -1,92 +1,107 @@
-# 📚 TrafficSchool Documentation
+# TRAFFICSCHOOL
 
-Välkommen till TrafficSchool systemdokumentation!
-
-## 🚨 VIKTIGT - LÄS FÖRST
-
-**🔴 [PRODUCTION READINESS CHECKLIST](./PRODUCTION-READINESS.md)** - KRITISKT att läsa innan deploy!
-
-**📋 [KUNDKRAV CHECKLISTA](./KUNDKRAV-CHECKLISTA.md)** - Vad kunden måste fixa innan lansering
+En webbaserad körskoleplattform där elever kan registrera sig, köpa paket,
+öva med quiz och genomföra digitala teoriprov. Systemet är byggt som
+mikroservicearkitektur med Spring Boot och React.
 
 ---
 
-## 🚀 Deployment & Production
+## TEKNOLOGISTACK 
 
-| Dokument                                              | Syfte                                                |
-| ----------------------------------------------------- | ---------------------------------------------------- |
-| **[Production Readiness](./PRODUCTION-READINESS.md)** | ⚠️ Komplett checklista + pedagogisk deployment guide |
-| **[Kundkrav Checklista](./KUNDKRAV-CHECKLISTA.md)**   | 📋 Vad kunden måste fixa (domän, Swish, Azure)       |
+| TJÄNST           | TEKNOLOGI                  | PORT  | ÅTKOMST  |
+|------------------|----------------------------|-------|----------|
+| frontend         | React 18, Vite, TailwindCSS| 5173  | Publik   |
+| api-gateway      | Spring Cloud Gateway       | 8080  | Publik   |
+| eureka-server    | Netflix Eureka             | 8761  | Intern   |
+| userService      | Spring Boot 3, Java 21     | 8081  | Intern   |
+| adminService     | Spring Boot 3, Java 21     | 8082  | Intern   |
+| paymentService   | Spring Boot 3, Java 21     | 8083  | Intern   |
+| examService      | Spring Boot 3, Java 21     | 8084  | Intern   |
+| quizService      | Spring Boot 3, Java 21     | 8085  | Intern   |
 
-**Deployment Guide inkluderar:**
-
-- 🏠 **Localhost vs Domän** - Pedagogisk förklaring
-- 🔄 **Development vs Production** - Hur allt hänger ihop
-- 📦 **Docker + Azure** - Steg-för-steg deployment
-- 💰 **Kostnadskalkyl** - Månadskostnader & budget
-- 🏦 **Swish Production** - Hur får man credentials från banken
-- 🌐 **DNS & Domän** - Hur kopplar man domän till Azure
-- 🚨 **Troubleshooting** - Vanliga problem & lösningar
-
----
-
-## 📖 Dokumentationsstruktur
-
-### [00-Overview](./00-Overview/)
-
-Översikt av hela systemet och projektstruktur.
-
-### [01-Architecture](./01-Architecture/)
-
-Systemarkitektur, microservices design, och tekniska beslut.
-
-### [02-Security](./02-Security/)
-
-Säkerhetsdokumentation, JWT authentication, och security best practices.
-
-### [03-Services](./03-Services/)
-
-Detaljerad dokumentation för varje microservice.
-
-### [04-Endpoints](./04-Endpoints/)
-
-API endpoints och integration guides.
-
-### [04-Frontend](./04-Frontend/)
-
-Frontend-specifik dokumentation och UI/UX guidelines.
+**Databas:** MySQL 8.0 — en databas per tjänst  
+**Auth:** Lösenordsfri inloggning via Magic Link (e-post) + JWT  
+**E-post:** SendGrid  
+**Betalning:** Swish  
 
 ---
 
-## 🔗 Snabblänkar
+## LIVE MILJÖ (Azure Container Apps)
 
-| Dokument                                                                 | Beskrivning                         |
-| ------------------------------------------------------------------------ | ----------------------------------- |
-| **[Production Readiness](./PRODUCTION-READINESS.md)**                    | ⚠️ Checklista för produktionsdeploy |
-| [Architecture Overview](./01-Architecture/Architecture.md)               | Systemarkitektur och design         |
-| [Security Guide](./02-Security/Security.md)                              | Säkerhetsimplementationer           |
-| [API Checklist](./04-Endpoints/Checklist.md)                             | API endpoint status                 |
-| [Admin Panel Improvements](./04-Frontend/Admin-Panel-UI-Improvements.md) | Frontend förbättringar              |
+| TJÄNST      | URL                                                                 |
+|-------------|---------------------------------------------------------------------|
+| Frontend    | https://frontend.redriver-3645ccf7.westus2.azurecontainerapps.io   |
+| API Gateway | https://api-gateway.redriver-3645ccf7.westus2.azurecontainerapps.io|
 
----
-
-## 🚀 Quick Start för Utvecklare
-
-1. Läs **[Production Readiness](./PRODUCTION-READINESS.md)** för kritiska säkerhetsfrågor
-2. Gå igenom [Architecture](./01-Architecture/Architecture.md) för systemförståelse
-3. Kolla [Security Guide](./02-Security/Security.md) för autentisering
-4. Använd [Services](./03-Services/) för service-specifik dokumentation
+Alla andra tjänster körs internt och nås bara via API Gateway.
 
 ---
 
-## 📝 Uppdatera Dokumentation
+## DOKUMENTATION
 
-När du gör ändringar i systemet:
 
-- ✅ Uppdatera relevant dokumentation
-- ✅ Bocka av i Production Readiness checklist
-- ✅ Commit documentation tillsammans med kod
-- ✅ Håll dokumentationen uppdaterad!
+## Arkitektur
+
+- [Arkitekturöversikt](architecture/overview.md)  
+  Systemdiagram, designval och databasstrategi
+
+- [Auth-flöde](architecture/auth-flow.md)  
+  Magic links, JWT och admin-inloggning
+
+- [Service-kommunikation](architecture/service-communication.md)  
+  Eureka, interna headers och API-nycklar
 
 ---
 
-**Senast uppdaterad:** 2026-03-13
+## Services
+
+- [API Gateway](services/api-gateway.md)  
+  Routing, filters, CORS och rate limiting
+
+- [userService](services/userService.md)  
+  Authentication, profiler och prenumerationer
+
+- [adminService](services/adminService.md)  
+  Admin-login och användarhantering
+
+- [paymentService](services/paymentService.md)  
+  Paket och Swish-betalningar
+
+- [examService](services/examService.md)  
+  Provsessioner, svar och resultat
+
+- [quizService](services/quizService.md)  
+  Frågebank och ämnen
+
+---
+
+## API
+
+- [Alla endpoints](api/endpoints.md)  
+  Komplett API-referens
+
+---
+
+## Deployment & Setup
+
+- [Kör lokalt](guides/local-setup.md)  
+  Docker-setup, `.env` och lokal utveckling
+
+- [Miljövariabler](guides/environment-variables.md)  
+  Variabler per tjänst
+
+- [Deployment](guides/deployment.md)  
+  GitHub Actions + Azure Container Apps
+
+---
+
+# KÖR LOKALT
+
+Kräver Docker och Docker Compose.
+
+```bash
+docker-compose up --build 
+```
+
+Se guides/local-setup.md för fullständig guide,
+.env-mall och felsökning.
