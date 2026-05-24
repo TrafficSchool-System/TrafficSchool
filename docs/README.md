@@ -93,6 +93,9 @@ Alla andra tjänster körs internt och nås bara via API Gateway.
 - [Deployment](guides/deployment.md)  
   GitHub Actions + Azure Container Apps
 
+- [Git-arbetsflöde](guides/git-workflow.md)  
+  Branching-strategi, commit-konventioner och dagligt arbetsflöde
+
 ---
 
 # KÖR LOKALT
